@@ -1,6 +1,7 @@
 import requests
 import pytest
 
+
 class TestTwelveTask:
 
     def test_headers_parse(self):
@@ -17,8 +18,12 @@ class TestTwelveTask:
             print(f"{key}: {value}")
             current_key = key
             current_val = value
+            assert 'x-secret-homework-header' in headers_dict, ("The response headers dict has not key "
+                                                                "'x-secret-homework-header' ")
+
             if current_key == 'x-secret-homework-header':
-                assert current_val == 'Some secret value'
+                assert current_val == 'Some secret value', ("headers with key 'x-secret-homework-header' is"
+                                                            "not equal 'x-secret-homework-header' ")
                 break
 
 
