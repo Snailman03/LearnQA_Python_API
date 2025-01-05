@@ -1,7 +1,6 @@
 import requests
 import pytest
 
-
 class TestTwelveTask:
 
     def test_headers_parse(self):
@@ -22,8 +21,8 @@ class TestTwelveTask:
                                                                 "'x-secret-homework-header' ")
 
             if current_key == 'x-secret-homework-header':
-                assert current_val == 'Some secret value', ("headers with key 'x-secret-homework-header' is"
-                                                            "not equal 'x-secret-homework-header' ")
+                assert current_val == 'Some secret value', ("headers value with key 'x-secret-homework-header' is"
+                                                            "not equal 'Some secret value' ")
                 break
 
 
