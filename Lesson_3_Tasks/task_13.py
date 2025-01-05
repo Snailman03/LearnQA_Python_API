@@ -15,7 +15,7 @@ class TestThirteenTask:
     def test_user_agent_parse(self, user_agent):
 
         url = "https://playground.learnqa.ru/ajax/api/user_agent_check"
-
+        list_incorrect_parse_ua = []
         response = requests.get(url, headers={"User-Agent": user_agent})
         response_dict = response.json()
         assert response.status_code == 200
@@ -78,7 +78,7 @@ class TestThirteenTask:
             except AssertionError:
                 list_incorrect_parse_ua.append(user_agent)
 
-    print(list_incorrect_parse_ua)
+        print(list_incorrect_parse_ua)
 
 
 
