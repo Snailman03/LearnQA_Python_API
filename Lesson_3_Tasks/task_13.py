@@ -1,6 +1,9 @@
 import requests
 import pytest
 
+from lib.base_case import BaseCase
+from lib.assertions import Assertions
+
 class TestThirteenTask:
     user_agents = [
         ('Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30'),
@@ -10,6 +13,7 @@ class TestThirteenTask:
         ('Mozilla/5.0 (iPad; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1')
     ]
     list_incorrect_parse_ua = []
+
 
     @pytest.mark.parametrize('user_agent', user_agents)
     def test_user_agent_parse(self, user_agent):
