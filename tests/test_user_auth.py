@@ -2,6 +2,8 @@ import requests
 import pytest
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+from lib.my_requests import MyRequests
+
 
 class TestUserAuth(BaseCase):
     url_user_auth = "https://playground.learnqa.ru/api/user/auth"
@@ -18,7 +20,8 @@ class TestUserAuth(BaseCase):
             "password": "1234"
         }
 
-        response_1 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
+
+        response_1 = MyRequests.post("/user/login", data = data)
 
         self.auth_sid = self.get_cookie(response_1,"auth_sid")
         self.token = self.get_header(response_1, "x-csrf-token")
@@ -26,10 +29,12 @@ class TestUserAuth(BaseCase):
 
     def test_auth_user(self):
 
-        response_2 = requests.get("https://playground.learnqa.ru/api/user/auth",
-                headers = {"x-csrf-token": self.token},
-                cookies = {"auth_sid": self.auth_sid}
-                )
+        response_2 = MyRequests.get(
+            "/user/auth",
+            headers={"x-csrf-token": self.token},
+            cookies = {"auth_sid": self.auth_sid}
+        )
+
         Assertions.assert_json_value_by_name(
             response_2,
             "user_id",
@@ -43,13 +48,13 @@ class TestUserAuth(BaseCase):
     def test_negative_auth_check(self,condition):
 
         if condition == 'no_cookie':
-            response_2 = requests.get(
-                "https://playground.learnqa.ru/api/user/auth",
+            response_2 = MyRequests.get(
+                "/user/auth",
                 headers = {"x-csrf-token": self.token}
             )
         else:
-            response_2 = requests.get(
-                self.url_user_auth,
+            response_2 = MyRequests.get(
+                "/user/auth",
                 cookies = {"auth_sid":self.auth_sid}
             )
 
