@@ -51,6 +51,39 @@ class BaseCase:
             "email": email
         }
 
+    def prepare_reg_data_short_username(self, email=None):
+        if email is None:
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}@{domain}"
+        return {
+            "password": "123",
+            "username": "l",
+            "firstName": "learnqa",
+            "lastName": "learnqa",
+            "email": email
+        }
+
+    def prepare_reg_data_long_username(self, email=None):
+        if email is None:
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}@{domain}"
+        long_user_name = ''
+        for x in range(251):
+            long_user_name = long_user_name + 'a'
+        print(long_user_name)
+        print(len(long_user_name))
+        return {
+            "password": "123",
+            "username": long_user_name,
+            "firstName": "learnqa",
+            "lastName": "learnqa",
+            "email": email
+        }
+
     def prepare_reg_uncompleted_data(self, without_param:str):
         if without_param == 'no_password':
             base_part = "learnqa"
