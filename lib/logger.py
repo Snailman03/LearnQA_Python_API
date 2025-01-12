@@ -8,10 +8,10 @@ from Previos_lesson_task.Lesson_2_Task_9 import cookies
 
 class Logger:
     file_name = f"logs/log_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
-
+    file_name_2 = f"log_" + str(datetime.datetime.now().strftime("%Y-%m-%d")) + ".log"
     @classmethod
     def _write_log_to_file(cls, data:str):
-        with open(cls.file_name,'a', encoding = 'utf-8') as logger_file:
+        with open(cls.file_name_2,'a', encoding = 'utf-8') as logger_file:
             logger_file.write(data)
 
     @classmethod

@@ -36,3 +36,77 @@ class BaseCase:
             "lastName": "learnqa",
             "email": email
         }
+
+    def prepare_reg_data_incorrect_email(self, email=None):
+        if email is None:
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}{domain}"
+        return {
+            "password": "123",
+            "username": "learnqa",
+            "firstName": "learnqa",
+            "lastName": "learnqa",
+            "email": email
+        }
+
+    def prepare_reg_uncompleted_data(self, without_param:str):
+        if without_param == 'no_password':
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}@{domain}"
+            return {
+                "username": "learnqa",
+                "firstName": "learnqa",
+                "lastName": "learnqa",
+                "email": email,
+                "missed_param": "password"
+            }
+
+        elif without_param == 'no_username':
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}{domain}"
+            return {
+                "password": "123",
+                "firstName": "learnqa",
+                "lastName": "learnqa",
+                "email": email,
+                "missed_param": "username"
+            }
+        elif without_param == 'no_firstName':
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}{domain}"
+            return {
+                "password": "123",
+                "username": "learnqa",
+                "lastName": "learnqa",
+                "email": email,
+                "missed_param": "firstName"
+            }
+        elif without_param == 'no_lastName':
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}{domain}"
+            return {
+                "password": "123",
+                "username": "learnqa",
+                "firstName": "learnqa",
+                "email": email,
+                "missed_param": "lastName"
+            }
+
+        elif without_param == 'no_email':
+            return {
+                "password": "123",
+                "username": "learnqa",
+                "firstName": "learnqa",
+                "lastName": "learnqa",
+                "missed_param": "email"
+            }
