@@ -51,6 +51,13 @@ class BaseCase:
             "email": email
         }
 
+    def prepare_incorrect_email(self):
+        base_part = "learnqa"
+        domain = "example.com"
+        random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+        email = f"{base_part}{random_part}{domain}"
+        return email
+
     def prepare_reg_data_short_username(self, email=None):
         if email is None:
             base_part = "learnqa"
