@@ -2,9 +2,23 @@ import json
 
 from requests import Response
 
+
 class Assertions:
+
     @staticmethod
-    def assert_json_value_by_name(response:Response, name, expected_value,
+    def assert_response_value_by_message_text(response: Response, expected_message=None,
+                                              error_message=None):
+
+        response_content_type = type(response.content)
+        print(response_content_type)
+
+        if isinstance(response_content_type, bytes):
+            response_message = response.content.decode("utf-8")
+            assert response_message == expected_message, error_message
+
+
+    @staticmethod
+    def assert_json_value_by_name(response: Response, name, expected_value,
                                   error_message):
         try:
             response_as_dict = response.json()
@@ -26,7 +40,7 @@ class Assertions:
         assert name in response_as_dict, f"Response JSON doesn't have key {name}"
 
     @staticmethod
-    def assert_json_has_keys(response: Response, names:list):
+    def assert_json_has_keys(response: Response, names: list):
         try:
             response_as_dict = response.json()
         except json.JSONDecodeError:
@@ -53,11 +67,8 @@ class Assertions:
             (f"Unexpected status code {response.status_code}, "
              f"expected {expected_status_code}")
 
-
-
-
     @staticmethod
-    def assert_parse_ua(response:Response, ua):
+    def assert_parse_ua(response: Response, ua):
         try:
             response_as_dict = response.json()
         except json.JSONDecodeError:
@@ -65,8 +76,8 @@ class Assertions:
                            f"Response text is {response.text}")
 
         if ua == ("Mozilla/5.0 (Linux; U;"
-            " Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 "
-            "(KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"):
+                  " Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 "
+                  "(KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"):
 
             expected_ua_1_dict = {
                 'platform': 'Mobile',
@@ -74,7 +85,7 @@ class Assertions:
                 'device': 'Android'
             }
             for key in expected_ua_1_dict:
-                #print(key)
+                # print(key)
                 try:
                     assert response_as_dict[key] == expected_ua_1_dict[key]
                 except AssertionError:
@@ -134,7 +145,3 @@ class Assertions:
                     print(f"Incorrect parse '{key}' value for "
                           f"{ua} "
                           f"user agent")
-
-
-
-

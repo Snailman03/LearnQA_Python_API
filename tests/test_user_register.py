@@ -79,7 +79,6 @@ class TestUserRegister(BaseCase):
         assert response.content.decode("utf-8") == f"The value of 'username' field is too long",\
               f"You try create user with very long username - '{data['username']}'"
 
-
     @pytest.mark.parametrize('uncompleted_data_variant',uncompleted_data_variants)
     def test_create_user_with_uncompleted_data(self,uncompleted_data_variant):
 

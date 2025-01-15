@@ -5,6 +5,7 @@ from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 
+
 class TestUserEdit(BaseCase):
     incorrect_params = [
         ('incorrect_email'),
@@ -12,11 +13,11 @@ class TestUserEdit(BaseCase):
     ]
 
     def test_edit_just_created_user(self):
-        #REGISTER
+        # REGISTER
         register_data = self.prepare_registration_data()
 
         response_1 = MyRequests.post("/user/",
-                                   data = register_data)
+                                     data=register_data)
 
         print(response_1.text)
 
@@ -28,28 +29,28 @@ class TestUserEdit(BaseCase):
         password = register_data['password']
         user_id = self.get_json_value(response_1, "id")
 
-        #LOGIN
+        # LOGIN
         login_data = {
             'email': email,
             'password': password
         }
 
         response_2 = MyRequests.post("/user/login",
-                                   data = login_data)
+                                     data=login_data)
         auth_sid = self.get_cookie(response_2, 'auth_sid')
         token = self.get_header(response_2, 'x-csrf-token')
 
-        #EDIT
+        # EDIT
         new_name = 'changed_Name'
 
         response_3 = MyRequests.put(f"/user/{user_id}",
-                                  headers = {'x-csrf-token': token},
-                                  cookies = {'auth_sid': auth_sid},
-                                  data = {'firstName': new_name}
-                                  )
+                                    headers={'x-csrf-token': token},
+                                    cookies={'auth_sid': auth_sid},
+                                    data={'firstName': new_name}
+                                    )
         Assertions.assert_code_status(response_3, 200)
 
-        #GET
+        # GET
         response_4 = MyRequests.get(
             f"/user/{user_id}",
             headers={'x-csrf-token': token},
@@ -63,13 +64,13 @@ class TestUserEdit(BaseCase):
             f"Wrong user name after edit"
         )
 
-
     def test_edit_not_authorized_user(self):
-        #REGISTER
+
+        # REGISTER
         register_data = self.prepare_registration_data()
 
         response_1 = MyRequests.post("/user/",
-                                   data = register_data)
+                                     data=register_data)
 
         print(response_1.text)
 
@@ -81,20 +82,19 @@ class TestUserEdit(BaseCase):
         password = register_data['password']
         user_id = self.get_json_value(response_1, "id")
 
-        #EDIT
+        # EDIT
         new_name = 'changed_Name'
 
         response_3 = MyRequests.put(f"/user/{user_id}",
-                                  # headers = {'x-csrf-token': token}
-                                  # cookies = {'auth_sid': auth_sid},
-                                    data = {'firstName': new_name}
-                                  )
+                                    # headers = {'x-csrf-token': token}
+                                    # cookies = {'auth_sid': auth_sid},
+                                    data={'firstName': new_name}
+                                    )
         print(response_3.content)
-        error_message = self.get_json_value(response_3,'error')
+        error_message = self.get_json_value(response_3, 'error')
         Assertions.assert_code_status(response_3, 400)
         assert error_message == f"Auth token not supplied", \
             f"You try edit data without authorized"
-
 
     def test_try_edit_by_another_user(self):
         # CREATE RANDOM USER AND GET HIS USER_ID
@@ -183,13 +183,13 @@ class TestUserEdit(BaseCase):
         assert error_message == f"This user can only edit their own data.", \
             f"You try edit data by another user"
 
-    @pytest.mark.parametrize('incorrect_param',incorrect_params)
-    def test_edit_incorrect_data_same_user(self,incorrect_param):
-        #REGISTER
+    @pytest.mark.parametrize('incorrect_param', incorrect_params)
+    def test_edit_incorrect_data_same_user(self, incorrect_param):
+        # REGISTER
         register_data = self.prepare_registration_data()
 
         response_1 = MyRequests.post("/user/",
-                                   data = register_data)
+                                     data=register_data)
 
         print(response_1.text)
 
@@ -201,27 +201,27 @@ class TestUserEdit(BaseCase):
         password = register_data['password']
         user_id = self.get_json_value(response_1, "id")
 
-        #LOGIN
+        # LOGIN
         login_data = {
             'email': email,
             'password': password
         }
 
         response_2 = MyRequests.post("/user/login",
-                                   data = login_data)
+                                     data=login_data)
         auth_sid = self.get_cookie(response_2, 'auth_sid')
         token = self.get_header(response_2, 'x-csrf-token')
 
-        #EDIT
+        # EDIT
         incorrect_firstname = 'c'
         incorrect_email = self.prepare_incorrect_email()
 
         if incorrect_param == 'incorrect_email':
             response_3 = MyRequests.put(f"/user/{user_id}",
-                                      headers = {'x-csrf-token': token},
-                                      cookies = {'auth_sid': auth_sid},
-                                      data = {'email': incorrect_email}
-                                      )
+                                        headers={'x-csrf-token': token},
+                                        cookies={'auth_sid': auth_sid},
+                                        data={'email': incorrect_email}
+                                        )
             error_message = self.get_json_value(response_3, 'error')
             print(response_3.content)
             Assertions.assert_code_status(response_3, 400)

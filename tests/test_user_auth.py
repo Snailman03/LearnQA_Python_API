@@ -22,13 +22,11 @@ class TestUserAuth(BaseCase):
             "password": "1234"
         }
 
-
         response_1 = MyRequests.post("/user/login", data = data)
 
         self.auth_sid = self.get_cookie(response_1,"auth_sid")
         self.token = self.get_header(response_1, "x-csrf-token")
         self.user_id_from_auth_method = self.get_json_value(response_1, "user_id")
-
 
     @allure.description("This test successfully authorized user by email and password")
     def test_auth_user(self):
