@@ -6,6 +6,30 @@ from requests import Response
 class Assertions:
 
     @staticmethod
+    def assert_response_error(response: Response, expected_message=None,
+                              expected_error=None, info_message=None):
+
+        response_content_type = type(response.content)
+        print(response_content_type)
+
+        if isinstance(response_content_type, bytes):
+            response_message = response.content.decode("utf-8")
+            assert response_message == expected_message, f"we expected error - '{expected_message}'" \
+                                                         f"but received {response_message}"
+        if isinstance(response_content_type, dict):
+            response_dict = response.json()
+            print(response_dict)
+            if 'error' in response_dict:
+                actual_error = response_dict['error']
+            elif 'success' in response_dict:
+                actual_result = response_dict['success']
+
+        assert actual_error == expected_error, f"we expected error - '{expected_error}'" \
+                                               f"but received {actual_result}"
+        assert actual_result == expected_message, f"we expected error - '{expected_error}'" \
+                                                  f"but received {actual_result}"
+
+    @staticmethod
     def assert_response_value_by_message_text(response: Response, expected_message=None,
                                               error_message=None):
 
@@ -15,7 +39,6 @@ class Assertions:
         if isinstance(response_content_type, bytes):
             response_message = response.content.decode("utf-8")
             assert response_message == expected_message, error_message
-
 
     @staticmethod
     def assert_json_value_by_name(response: Response, name, expected_value,

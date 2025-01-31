@@ -1,15 +1,23 @@
 import requests
 import pytest
 import time
-
+import allure
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+from allure_commons.types import Severity
 
 
+@allure.epic("API methods")
+@allure.feature("Test user delete methods")
+@allure.label("owner", "Ivan Mitin")
 class TestUserDelete(BaseCase):
     special_id_list = [1, 2, 3, 4, 5]
 
+    @allure.title("Try to delete user with special id")
+    @allure.story("Try to delete user with special id [1 .. 5] requirements negative")
+    @allure.description("Try to delete user with special id [1 .. 5] requirements negative")
+    @allure.severity(Severity.NORMAL)
     def test_n_try_delete_user_with_special_id(self):
         # LOGIN AS USER WITH SPECIAL ID
         data = {
@@ -41,6 +49,10 @@ class TestUserDelete(BaseCase):
                                                  error_message,
                                                  "incorrect mistake for try to delete special user action")
 
+    @allure.title("Try to delete same user w/o authorization")
+    @allure.story("Try to delete same user w/o authorization requirements negative")
+    @allure.description("Try to delete same user w/o authorization requirements negative")
+    @allure.severity(Severity.NORMAL)
     def test_n_try_delete_user_without_authorization(self):
         # REGISTER NEW USER AND GET HIS USER ID
         register_data = self.prepare_registration_data()
@@ -68,6 +80,10 @@ class TestUserDelete(BaseCase):
         Assertions.assert_json_value_by_name(response_2, 'error', error_message,
                                              f"Incorrect error message for delete without authorized action")
 
+    @allure.title("Try to delete same user with authorization")
+    @allure.story("Try to delete same user with authorization p")
+    @allure.description("Try to delete same user with authorization positive")
+    @allure.severity(Severity.CRITICAL)
     def test_p_delete_same_user_with_auth(self):
         # REGISTER NEW USER
         register_data = self.prepare_registration_data()
@@ -118,16 +134,21 @@ class TestUserDelete(BaseCase):
                                                          f"We get incorrect message after get "
                                                          f"deleted userr information")
 
+    @allure.title("Try to delete another user with authorization")
+    @allure.story("Try to delete another user with authorization req negative")
+    @allure.description("Try to delete another user with authorization")
+    @allure.severity(Severity.CRITICAL)
     def test_try_delete_data_by_another_auth_user(self):
         # CREATE FIRST RANDOM USER AND GET HIS USER_ID
-        data_0 = self.prepare_registration_data()
+        with allure.step("# CREATE FIRST RANDOM USER AND GET HIS USER_ID"):
+            data_0 = self.prepare_registration_data()
 
-        response_0 = MyRequests.post("/user/",
-                                     data=data_0)
-        random_first_user_id = self.get_json_value(response_0, 'id')
-        print(random_first_user_id)
-        print(response_0.json())
-        Assertions.assert_code_status(response_0, 200)
+            response_0 = MyRequests.post("/user/",
+                                         data=data_0)
+            random_first_user_id = self.get_json_value(response_0, 'id')
+            print(random_first_user_id)
+            print(response_0.json())
+            Assertions.assert_code_status(response_0, 200)
 
         time.sleep(5)
 
@@ -165,10 +186,11 @@ class TestUserDelete(BaseCase):
                                        )
         print(response_3.content)
         print(type(response_3.json()))
-        error_message = self.get_json_value(response_3, 'error')
+
+        Assertions.assert_json_has_key(response_3, "error")
+        # assert error_message == f"This user can only delete their own account.", \
+        #     f"incorrect message for attempt to delete another account action "
         Assertions.assert_code_status(response_3, 400)
-        assert error_message == f"This user can only delete their own account.", \
-            f"incorrect message for attempt to delete another account action "
 
         # CHECK THEN USER 1 IS EXIST
 

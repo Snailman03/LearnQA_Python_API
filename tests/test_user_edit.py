@@ -1,22 +1,32 @@
 import pytest
 import requests
 import time
+import allure
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+from allure_commons.types import Severity
 
+
+@allure.epic("API methods")
+@allure.feature("Test user edit methods")
+@allure.label("owner", "Ivan Mitin")
 class TestUserEdit(BaseCase):
     incorrect_params = [
         ('incorrect_email'),
         ('incorrect_firstName')
     ]
 
+    @allure.title("Test edit just created user")
+    @allure.story("Test edit just created user")
+    @allure.description("Test edit just created user")
+    @allure.severity(Severity.NORMAL)
     def test_edit_just_created_user(self):
-        #REGISTER
+        # REGISTER
         register_data = self.prepare_registration_data()
 
         response_1 = MyRequests.post("/user/",
-                                   data = register_data)
+                                     data=register_data)
 
         print(response_1.text)
 
@@ -28,28 +38,28 @@ class TestUserEdit(BaseCase):
         password = register_data['password']
         user_id = self.get_json_value(response_1, "id")
 
-        #LOGIN
+        # LOGIN
         login_data = {
             'email': email,
             'password': password
         }
 
         response_2 = MyRequests.post("/user/login",
-                                   data = login_data)
+                                     data=login_data)
         auth_sid = self.get_cookie(response_2, 'auth_sid')
         token = self.get_header(response_2, 'x-csrf-token')
 
-        #EDIT
+        # EDIT
         new_name = 'changed_Name'
 
         response_3 = MyRequests.put(f"/user/{user_id}",
-                                  headers = {'x-csrf-token': token},
-                                  cookies = {'auth_sid': auth_sid},
-                                  data = {'firstName': new_name}
-                                  )
+                                    headers={'x-csrf-token': token},
+                                    cookies={'auth_sid': auth_sid},
+                                    data={'firstName': new_name}
+                                    )
         Assertions.assert_code_status(response_3, 200)
 
-        #GET
+        # GET
         response_4 = MyRequests.get(
             f"/user/{user_id}",
             headers={'x-csrf-token': token},
@@ -63,13 +73,17 @@ class TestUserEdit(BaseCase):
             f"Wrong user name after edit"
         )
 
-
+    @allure.title("Test edit same not authorized user")
+    @allure.story("Test edit same not authorized user")
+    @allure.description("Test edit same not authorized user")
+    @allure.severity(Severity.NORMAL)
     def test_edit_not_authorized_user(self):
-        #REGISTER
+
+        # REGISTER
         register_data = self.prepare_registration_data()
 
         response_1 = MyRequests.post("/user/",
-                                   data = register_data)
+                                     data=register_data)
 
         print(response_1.text)
 
@@ -81,21 +95,24 @@ class TestUserEdit(BaseCase):
         password = register_data['password']
         user_id = self.get_json_value(response_1, "id")
 
-        #EDIT
+        # EDIT
         new_name = 'changed_Name'
 
         response_3 = MyRequests.put(f"/user/{user_id}",
-                                  # headers = {'x-csrf-token': token}
-                                  # cookies = {'auth_sid': auth_sid},
-                                    data = {'firstName': new_name}
-                                  )
+                                    # headers = {'x-csrf-token': token}
+                                    # cookies = {'auth_sid': auth_sid},
+                                    data={'firstName': new_name}
+                                    )
         print(response_3.content)
-        error_message = self.get_json_value(response_3,'error')
+        error_message = self.get_json_value(response_3, 'error')
         Assertions.assert_code_status(response_3, 400)
         assert error_message == f"Auth token not supplied", \
             f"You try edit data without authorized"
 
-
+    @allure.title("Test try edit another user data by authorized user")
+    @allure.story("Test try edit another user data by authorized user")
+    @allure.description("Test try edit another user data by authorized user")
+    @allure.severity(Severity.NORMAL)
     def test_try_edit_by_another_user(self):
         # CREATE RANDOM USER AND GET HIS USER_ID
         data_0 = self.prepare_registration_data()
@@ -130,6 +147,10 @@ class TestUserEdit(BaseCase):
         print(response_3.content)
         Assertions.assert_code_status(response_3, 400)
 
+    @allure.title("Test try edit another user data by authorized user with id not in [1..5]")
+    @allure.story("Test try edit another user data by authorized user with id not in [1..5]")
+    @allure.description("Test try edit another user data by authorized user with id not in [1..5]")
+    @allure.severity(Severity.NORMAL)
     def test_try_edit_data_by_another_user_2(self):
         # CREATE FIRST RANDOM USER AND GET HIS USER_ID
         data_0 = self.prepare_registration_data()
@@ -183,13 +204,17 @@ class TestUserEdit(BaseCase):
         assert error_message == f"This user can only edit their own data.", \
             f"You try edit data by another user"
 
-    @pytest.mark.parametrize('incorrect_param',incorrect_params)
-    def test_edit_incorrect_data_same_user(self,incorrect_param):
-        #REGISTER
+    @allure.story("Test try edit incorrect user data by same user with auth")
+    @allure.description("Test try edit incorrect user data by same user with auth")
+    @allure.severity(Severity.NORMAL)
+    @pytest.mark.parametrize('incorrect_param', incorrect_params)
+    @allure.title("Test try edit incorrect user data {incorrect_param} by same user with auth")
+    def test_edit_incorrect_data_same_user(self, incorrect_param):
+        # REGISTER
         register_data = self.prepare_registration_data()
 
         response_1 = MyRequests.post("/user/",
-                                   data = register_data)
+                                     data=register_data)
 
         print(response_1.text)
 
@@ -201,27 +226,27 @@ class TestUserEdit(BaseCase):
         password = register_data['password']
         user_id = self.get_json_value(response_1, "id")
 
-        #LOGIN
+        # LOGIN
         login_data = {
             'email': email,
             'password': password
         }
 
         response_2 = MyRequests.post("/user/login",
-                                   data = login_data)
+                                     data=login_data)
         auth_sid = self.get_cookie(response_2, 'auth_sid')
         token = self.get_header(response_2, 'x-csrf-token')
 
-        #EDIT
+        # EDIT
         incorrect_firstname = 'c'
         incorrect_email = self.prepare_incorrect_email()
 
         if incorrect_param == 'incorrect_email':
             response_3 = MyRequests.put(f"/user/{user_id}",
-                                      headers = {'x-csrf-token': token},
-                                      cookies = {'auth_sid': auth_sid},
-                                      data = {'email': incorrect_email}
-                                      )
+                                        headers={'x-csrf-token': token},
+                                        cookies={'auth_sid': auth_sid},
+                                        data={'email': incorrect_email}
+                                        )
             error_message = self.get_json_value(response_3, 'error')
             print(response_3.content)
             Assertions.assert_code_status(response_3, 400)

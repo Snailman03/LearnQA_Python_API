@@ -9,14 +9,15 @@ from Previos_lesson_task.Lesson_2_Task_9 import cookies
 class Logger:
     file_name = f"logs/log_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
     file_name_2 = f"log_" + str(datetime.datetime.now().strftime("%Y-%m-%d")) + ".log"
+
     @classmethod
-    def _write_log_to_file(cls, data:str):
-        with open(cls.file_name,'a', encoding = 'utf-8') as logger_file:
+    def _write_log_to_file(cls, data: str):
+        with open(cls.file_name, 'a', encoding='utf-8') as logger_file:
             logger_file.write(data)
 
     @classmethod
-    def add_request(cls, url:str, data : dict, headers: dict,
-                    cookies:dict , method : str):
+    def add_request(cls, url: str, data: dict, headers: dict,
+                    cookies: dict, method: str):
         testname = os.environ.get('PYTEST_CURRENT_TEST')
 
         data_to_add = f"\n.....\n"
@@ -32,7 +33,7 @@ class Logger:
         cls._write_log_to_file(data_to_add)
 
     @classmethod
-    def add_response(cls, response:Response ):
+    def add_response(cls, response: Response):
         cookies_as_dict = dict(response.cookies)
         headers_as_dict = dict(response.headers)
 
